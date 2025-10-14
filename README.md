@@ -56,11 +56,7 @@ TixPop delivers an enhanced user experience through key interactive elements:
 
 ## Page example
 <img width="1915" height="874" alt="image" src="https://github.com/user-attachments/assets/1dbc3109-e062-405a-9bee-174fcba9ee91" />
-![WhatsApp Image 2025-09-27 at 15 06 31_4fda7e37](https://github.com/user-attachments/assets/5d1cdaa0-e972-44c4-a7dc-358d01b63a62)
-![WhatsApp Image 2025-09-27 at 15 06 49_2ec3f142](https://github.com/user-attachments/assets/7769657f-35f6-4789-ae27-d56f00d17b0e)
-![WhatsApp Image 2025-09-27 at 15 06 57_bffa6c72](https://github.com/user-attachments/assets/ec4404b0-197a-4f8a-bb7f-ceef29e98f08)
-![WhatsApp Image 2025-09-27 at 15 07 04_891a40d8](https://github.com/user-attachments/assets/dca5151c-2a23-49a1-86ff-8ddd21a74862)
-![WhatsApp Image 2025-09-27 at 15 07 09_8648a176](https://github.com/user-attachments/assets/d8ef7ded-8e0e-4ae1-95f4-bdcdcd3ad336)
+
 
 
 
