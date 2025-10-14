@@ -1,5 +1,5 @@
-🎟️ The TixPop System: Next-Generation Event Ticketing
-✨ Project Goal
+# 🎟️ The TixPop System: Next-Generation Event Ticketing
+# ✨ Project Goal
 
 TixPop is a robust, web-based application built to modernize the experience of purchasing tickets for concerts and live events, moving beyond outdated physical counters and complicated third-party vendors. Our purpose is to create a flexible, user-friendly, and reliable platform for both attendees and administrators.
 🚫 The Problem We Solve (Legacy Issues)
