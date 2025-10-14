@@ -56,11 +56,17 @@ TixPop delivers an enhanced user experience through key interactive elements:
 
 ## Page example
 <img width="1915" height="874" alt="image" src="https://github.com/user-attachments/assets/1dbc3109-e062-405a-9bee-174fcba9ee91" />
-![WhatsApp Image 2025-09-27 at 15 06 31_41bf03fd](https://github.com/user-attachments/assets/b9870fbf-1525-445a-bc1f-ecdf1589f1dc)
-![WhatsApp Image 2025-09-27 at 15 06 49_2cdf4ec8](https://github.com/user-attachments/assets/9df6103b-68ba-4836-801c-e19bd4943c05)
-![WhatsApp Image 2025-09-27 at 15 06 57_50aea4f8](https://github.com/user-attachments/assets/3a394b1f-5ec2-4d3b-9a25-bfd850377860)
-![WhatsApp Image 2025-09-27 at 15 07 04_ee483e44](https://github.com/user-attachments/assets/605ffab1-3292-4fc0-806a-0aae291f2b65)
-![WhatsApp Image 2025-09-27 at 15 07 09_595b3930](https://github.com/user-attachments/assets/bfeed2b9-cade-4db7-8327-c5eec94c25c1)
+![WhatsApp Image 2025-09-27 at 15 06 31_4fda7e37](https://github.com/user-attachments/assets/5d1cdaa0-e972-44c4-a7dc-358d01b63a62)
+![WhatsApp Image 2025-09-27 at 15 06 49_2ec3f142](https://github.com/user-attachments/assets/7769657f-35f6-4789-ae27-d56f00d17b0e)
+![WhatsApp Image 2025-09-27 at 15 06 57_bffa6c72](https://github.com/user-attachments/assets/ec4404b0-197a-4f8a-bb7f-ceef29e98f08)
+![WhatsApp Image 2025-09-27 at 15 07 04_891a40d8](https://github.com/user-attachments/assets/dca5151c-2a23-49a1-86ff-8ddd21a74862)
+![WhatsApp Image 2025-09-27 at 15 07 09_8648a176](https://github.com/user-attachments/assets/d8ef7ded-8e0e-4ae1-95f4-bdcdcd3ad336)
+
+
+
+
+
+
 
 
 
