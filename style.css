@@ -451,3 +451,62 @@ label {
   font-size: 15px;
   box-sizing: border-box;
 }
+
+/*register*/
+.register-box {
+  height: 580px;
+  width: 650px;
+  background: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  color: black;
+  border-radius: 10px;
+  padding: 30px 40px;
+}
+
+.register-box form {
+  display: flex;
+  flex-direction: column;
+}
+
+.register-box label {
+  margin-top: 20px;
+  margin-bottom: 4px;
+  font-size: 16px;
+}
+
+.register-box input[type="text"],
+.register-box input[type="email"],
+.register-box input[type="password"] {
+  width: 100%;
+  padding: 7px 8px;
+  border-radius: 4px;
+  border: 1px solid #bdbdbd;
+  background: #e0e0e0;
+  margin-bottom: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.register-box h1 {
+  text-align: center;
+  color: black;
+  font-size: 35px;
+}
+
+.register-box .login-link {
+  font-size: 14.5px;
+  text-align: center;
+  margin: 20px 0 15px;
+}
+
+.login-link p a {
+  color: #000000;
+  text-decoration: none;
+}
+
+.login-link p a:hover {
+  text-decoration: underline;
+  color: rgb(150, 150, 217);
+}
