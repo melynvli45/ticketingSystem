@@ -11,16 +11,30 @@
     />
   </head>
 
-  <body class="other-page">
+  <body class="home-page">
     <nav class="navbar">
       <div class="logo">TixPop</div>
+
+      <div class="audio-player">
+        <button id="musicNote">🎵</button>
+        <button id="muteBtn">🔇</button>
+        <audio id="audio" src="image/Playlist.mp3" loop></audio>
+      </div>
+      <script src="script.js"></script>
 
       <div class="nav-links">
         <a href="home.html">Home</a>
         <a href="discover.html">Discover</a>
+        <a href="seatCategory.html">Seat Category</a>
         <a href="ticketpurchase.html">Ticket Purchase</a>
         <a href="viewTicket.html">My Ticket</a>
+        <a href="profile.html">Profile</a>
         <a href="index.html">Log Out</a>
+      </div>
+
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search concerts" />
+        <button class="search-btn"><i class='bx bx-search'></i></button>
       </div>
     </nav>
 
@@ -34,55 +48,9 @@
           <img src="image/katseye1.jpg" alt="" />
         </div>
         <h3>KATSEYE :<br />THE BEAUTIFUL CHAOS TOUR</h3>
-        <p>DATE: 21TH SEPTEMBER 2025<br />TIME: 5:00 PM TO 9:00 PM</p>
+        <p>EVENT ID: [IDIDIDID]<br>DATE: 21TH SEPTEMBER 2025<br />START TIME: 5:00 PM<br>END TIME: 9:00PM</TIME></p>
       </div>
 
-      <div class="band-card">
-        <div class="img-wrapper">
-          <img src="image/enha2.jpg" alt="" />
-        </div>
-        <h3>ENHYPEN WORLD TOUR :<br />WALK THE LINE</h3>
-        <p>DATE: 30TH SEPTEMBER 2025<br />TIME: 10:00 AM TO 1:00 PM</p>
-      </div>
-
-      <div class="band-card">
-        <div class="img-wrapper">
-          <img src="image/txt1.jpg" alt="" />
-        </div>
-        <h3>TOMORROW BY TOGETHER WORLD TOUR :<br />ACT: TOMORROW</h3>
-        <p>DATE: 18TH OCTOBER 2025</p>
-      </div>
-
-      <div class="band-card">
-        <div class="img-wrapper">
-          <img src="image/didifriends.jpg" alt="" />
-        </div>
-        <h3>DIDI AND FRIEND : KONSERT HORA HOREY</h3>
-        <p>DATE: 30TH SEPTEMBER 2025</p>
-      </div>
-
-      <div class="band-card">
-        <div class="img-wrapper">
-          <img src="image/idle1.jpg" alt="" />
-        </div>
-        <h3>
-          IDLE WORLD TOUR :<br />
-          I AM FREE-TY
-        </h3>
-        <p>DATE: 6TH NOVEMBER 2025<br />TIME: 6:00 PM TO 9:00 PM</p>
-      </div>
-
-      <div class="band-card">
-        <div class="img-wrapper">
-          <img src="image/twice2.jpg" alt="" />
-        </div>
-        <h3>TWICE WORLD TOUR :<br />READY TO BE</h3>
-        <p>DATE: 12TH DECEMBER 2025<br />TIME: 5:00 PM TO 10:00 PM</p>
-      </div>
     </div>
-
-    <a href="ticketpurchase.html">
-      <button class="btn">SECURE YOUR TICKET NOW!</button>
-    </a>
   </body>
 </html>

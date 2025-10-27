@@ -12,44 +12,40 @@
   </head>
 
   <body class="login-page">
-    <div class="register-box">
-      <form action="purchasesuccess.html">
-        <h1>PLEASE ENTER YOUR DETAILS</h1>
+    <div class="wrapper">
+      <form action="register.html"> <!--Nanti masa tukar jadi php tu--> 
+        <h1>TIXPOP TICKETING SYSTEM</h1>
 
-        <label>FULL NAME: </label>
-        <input
-          type="text"
-          placeholder="Please enter your full name."
-          required
-        />
-
-        <label>EMAIL: </label>
-        <input type="text" placeholder="Please enter your email." required />
-
-        <label>PASSWORD: </label>
-        <input
-          type="password"
-          placeholder="Please enter your password."
-          required
-        />
-
-        <label>CONFIRM PASSWORD: </label>
-        <input
-          type="password"
-          placeholder="Please enter the correct password."
-          required
-        />
-
-        <div class="btn-container">
-          <button class="btn-tix" type="submit">SUBMIT</button>
-          <button class="btn-tix" type="reset">CANCEL</button>
+        <h5>Please enter your details</h5>
+        <div class="input-box">
+          <input type="email" placeholder="Email" required />
         </div>
 
-        <div class="login-link">
-          <p><a href="login.html">Already have a account?</a></p>
+        <div class="input-box">
+          <input type="text" placeholder="Username" required />
         </div>
 
+        <div class="input-box">
+          <input type="text" placeholder="Full Name" required />
+        </div>
 
+        <div class="input-box">
+          <input type="password" placeholder="Password" required />
+        </div>
+
+        <div class="input-box">
+          <input type="password" placeholder="Confirm Password" required />
+        </div>
+
+        <div class="rbtn-container">
+        <button type="submit" class="registerbtn">LOGIN</button>
+        <button type="reset" class="registerbtn">RESET</button>
+        </div>
+
+        <div class="register-link">
+          <p>Already have an account? <a href="login.html">Login</a></p>
+        </div>
+        
       </form>
     </div>
   </body>

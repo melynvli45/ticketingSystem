@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My ticket</title>
+    <title>Ticket Purchase</title>
     <link rel="stylesheet" href="style.css" />
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
@@ -18,8 +18,10 @@
       <div class="nav-links">
         <a href="home.html">Home</a>
         <a href="discover.html">Discover</a>
+        <a href="seatCategory.html">Seat Category</a>
         <a href="ticketpurchase.html">Ticket Purchase</a>
         <a href="viewTicket.html">My Ticket</a>
+        <a href="profile.html">Profile</a>
         <a href="index.html">Log Out</a>
       </div>
     </nav>
@@ -28,15 +30,15 @@
       <form action="purchasesuccess.html">
         <h1>PLEASE ENTER YOUR DETAILS</h1>
 
-        <label>FULL NAME: </label>
+        <label>USERNAME: </label>
         <input
           type="text"
-          placeholder="Please enter your full name."
+          placeholder="Please enter your username."
           required
         />
 
         <label>EMAIL: </label>
-        <input type="text" placeholder="Please enter your email." required />
+        <input type="text" placeholder="example@gmail.com" required />
 
         <label>SELECT CONCERT: </label>
         <select>
@@ -76,9 +78,13 @@
           </label>
           <label>
             <input type="radio" name="payment" required />
-            PAYLATER
+            DUITNOW
           </label>
         </div>
+
+        <label>
+          <h2>Grand Total: RM[duit]</h2>
+        </label>
 
         <label>
           <input type="checkbox" required />
