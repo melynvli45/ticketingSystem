@@ -12,76 +12,72 @@
   </head>
 
   <body class="home-page">
-    <nav class="navbar">
-      <div class="logo">TixPop</div>
-
-      <div class="nav-links">
-        <a href="home.php">Home</a>
-        <div class="dropdown">
-          <button class="dropbtn">Manage Concert</button>
-          <div class="dropdown-content">
-            <a href="admin_ConcertAdd.php">Add Concert</a>
-            <a href="admin_Concert.php">Concert List</a>
-          </div>
-        </div>
-        <div class="dropdown">
-          <button class="dropbtn">Booking List</button>
-          <div class="dropdown-content">
-            <a href="admin_bookpending.php">Pending</a>
-            <a href="admin_bookapprove.php">  Approved</a>
-            <a href="admin_bookcancel.php">Rejected</a>
-          </div>
-        </div>
-
-        <div class="dropdown">
-          <button class="dropbtn">Seat Category</button>
-          <div class="dropdown-content">
-            <a href="admin_SeatAdd.php">Add Category</a>
-            <a href="admin_Seatcategory.php"> Seat List</a>
-          </div>
-        </div>
-
-        <a href="admin_profile.php">Profile</a>
-        <a href="index.php">Log Out</a>
-      </div>
-
-      <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search concerts" />
-        <button class="search-btn"><i class='bx bx-search'></i></button>
-      </div>
-    </nav>
+    <?php
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    require_once __DIR__ . '/db.php';
+    // require admin
+    if (empty($_SESSION['user_type']) || ($_SESSION['user_type'] ?? '') !== 'admin') {
+        header('Location: login.php');
+        exit;
+    }
+    ?>
+    <?php include __DIR__ . '/admin_anavbar.php'; ?>
 
     <div class="title">
       <h1>CONCERTS FOR YOU</h1>
+      <div style="margin-top:12px"><a class="eventbtn" href="admin_ConcertAdd.php">+ Add New Event</a></div>
     </div>
 
-    <!--Ni just untuk bayangan je, kalau nak ubah, dipersilakan :)-->>
     <div class="band-box">
-      <div class="band-card">
-        <div class="img-wrapper">
-          <img src="image/katseye1.jpg" alt="" />
-        </div>
-        <h3>KATSEYE :<br />THE BEAUTIFUL CHAOS TOUR</h3>
-        <p>EVENT ID: [IDIDIDID]<br>DATE: 21TH SEPTEMBER 2025<br />START TIME: 5:00 PM<br>END TIME: 9:00PM</TIME></p>
+    <?php
+      // load events from DB
+      try {
+        $stmt = $pdo->query('SELECT Event_ID, Name, Date, Time, Venue, poster FROM event ORDER BY Date ASC');
+        $events = $stmt->fetchAll();
+      } catch (Exception $e) {
+        $events = [];
+      }
 
-        <div class="rbtn-container">
-        <a href="admin_ConcertUpdate.php">
-        <button type="submit" class="bandbtn">UPDATE</button>
-        </a>
-        <button class="bandbtn" onclick="deleteItem()">DELETE</button>
-        </div>
-      </div>
-    </div>
+      function posterForNameAdmin($name) {
+        $n = strtolower($name);
+        if (stripos($n, 'black') !== false || stripos($n, 'blackpink') !== false) return 'image/blackpink.png';
+        if (stripos($n, 'stray') !== false || stripos($n, 'stray kids') !== false) return 'image/straykids.jpg';
+        if (stripos($n, 'new') !== false || stripos($n, 'newjeans') !== false) return 'image/newjeans.png';
+        return 'image/tick1.jpg';
+      }
 
-    <script>
-      function deleteItem(button) {
-        if (confirm("Are you sure you want to delete this concert?")) {
-          // Find the closest band card and remove it
-          const card = button.closest(".band-card");
-          card.remove();
+      if (empty($events)) {
+        echo '<p>No events found.</p>';
+      } else {
+        foreach ($events as $ev) {
+          $poster = null;
+          if (!empty($ev['poster']) && file_exists(__DIR__ . '/' . $ev['poster'])) {
+            $poster = $ev['poster'];
+          } else {
+            $poster = posterForNameAdmin($ev['Name']);
+          }
+          $displayDate = htmlspecialchars($ev['Date']);
+          $displayTime = htmlspecialchars($ev['Time'] ?? 'TBA');
+          $venue = htmlspecialchars($ev['Venue'] ?? 'TBA');
+          $name = htmlspecialchars($ev['Name'] ?? 'Unnamed Event');
+          $eid = (int)$ev['Event_ID'];
+          echo '<div class="band-card">';
+          echo '<div class="img-wrapper"><img src="' . htmlspecialchars($poster) . '" alt="' . $name . '" /></div>';
+          echo '<h3>' . $name . '</h3>';
+          echo '<p>EVENT ID: ' . $eid . '<br>DATE: ' . $displayDate . '<br>START TIME: ' . $displayTime . '<br>VENUE: ' . $venue . '</p>';
+          echo '<div class="rbtn-container">';
+          echo '<a href="admin_ConcertAdd.php?id=' . $eid . '"><button type="button" class="bandbtn">UPDATE</button></a>';
+          // delete form posts to admin_ConcertAdd.php to use existing delete handler
+          echo '<form method="post" action="admin_ConcertAdd.php" style="display:inline-block;margin-left:8px">';
+          echo '<input type="hidden" name="event_id" value="' . $eid . '" />';
+          echo '<button class="bandbtn" type="submit" name="delete_event" value="1" onclick="return confirm(\'Are you sure you want to delete this concert? This will remove the event (and may remove related invoices if you choose force).\')">DELETE</button>';
+          echo '</form>';
+          echo '</div>';
+          echo '</div>';
         }
       }
-    </script>
+    ?>
+    </div>
 
   </body>
 </html>

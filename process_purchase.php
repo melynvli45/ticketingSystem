@@ -18,7 +18,7 @@ if (empty($_SESSION['user_id'])) {
 $user_id = (int)$_SESSION['user_id'];
 $event_id = isset($_POST['event_id']) ? (int)$_POST['event_id'] : 0;
 $quantity = isset($_POST['quantity']) ? max(1, (int)$_POST['quantity']) : 1;
-$category_type = trim($_POST['category_type'] ?? '');
+$category_id = isset($_POST['category_id']) && ctype_digit((string)$_POST['category_id']) ? (int)$_POST['category_id'] : null;
 
 if ($event_id <= 0) {
     $_SESSION['error'] = 'Please select a valid event.';
@@ -29,8 +29,17 @@ if ($event_id <= 0) {
 try {
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare('INSERT INTO invoice (User_ID, Event_ID, Quantity) VALUES (?, ?, ?)');
-    $stmt->execute([$user_id, $event_id, $quantity]);
+    // validate provided category_id exists (optional)
+    if ($category_id !== null) {
+        $c = $pdo->prepare('SELECT Category_ID FROM category WHERE Category_ID = ?');
+        $c->execute([$category_id]);
+        if (!$c->fetch()) {
+            throw new Exception('Invalid category selected.');
+        }
+    }
+
+    $stmt = $pdo->prepare('INSERT INTO invoice (User_ID, Event_ID, Quantity, Category_ID) VALUES (?, ?, ?, ?)');
+    $stmt->execute([$user_id, $event_id, $quantity, $category_id]);
     $invoice_id = $pdo->lastInsertId();
 
     $stmt2 = $pdo->prepare('INSERT INTO payment (Invoice_ID, Payment_status) VALUES (?, ?)');

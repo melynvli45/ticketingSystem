@@ -14,14 +14,17 @@ if (session_status() === PHP_SESSION_NONE) {
     <a href="home.php">Home</a>
     <a href="discover.php">Discover</a>
 
-    <?php if (!empty($_SESSION['user_id'])): ?>
+    <?php if (!empty($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin'): ?>
       <a href="seatCategory.php">Seat Category</a>
+      <a href="admin_SeatAdd.php">Add Category</a>
+    <?php endif; ?>
+
+    <?php if (!empty($_SESSION['user_id'])): ?>
       <a href="ticketpurchase.php">Ticket Purchase</a>
       <a href="viewTicket.php">My Ticket</a>
       <a href="profile.php">Profile</a>
       <a href="logout.php">Log Out</a>
     <?php else: ?>
-      <a href="seatCategory.php">Seat Category</a>
       <a href="login.php">Log In</a>
       <a href="register.php">Register</a>
     <?php endif; ?>

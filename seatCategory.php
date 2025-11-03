@@ -1,9 +1,13 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) session_start();
+require_once __DIR__ . '/db.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Main Menu</title>
+    <title>Seat Categories</title>
     <link rel="stylesheet" href="style.css" />
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
@@ -25,11 +29,13 @@
       <div class="nav-links">
         <a href="home.php">Home</a>
         <a href="discover.php">Discover</a>
-        <a href="seatCategory.php">Seat Category</a>
         <a href="ticketpurchase.php">Ticket Purchase</a>
         <a href="viewTicket.php">My Ticket</a>
         <a href="profile.php">Profile</a>
         <a href="index.php">Log Out</a>
+        <?php if (!empty($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin'): ?>
+          <a href="admin_SeatAdd.php">Add Category</a>
+        <?php endif; ?>
       </div>
     </nav>
 
@@ -37,26 +43,25 @@
       <h1>SEAT CATEGORY</h1>
     </div>
 
-    <!--Again, bayangan, delete masa buat php, nak tukar dipersilakan-->
-
     <div class="category-box">
-      <div class="category-card">
-        <h3>[EVENT ID 1]</h3>
-        <p>
-          Category ID: IDID<br />
-          PRICE: RM 899.00<br />
-          CATEGORY TYPE: VVVVVVIP
-        </p>
-      </div>
+      <?php
+      try {
+        $cats = $pdo->query('SELECT Category_ID, Category_type, Price, description FROM category ORDER BY Price DESC')->fetchAll();
+      } catch (Exception $e) {
+        $cats = [];
+      }
 
-      <div class="category-card">
-        <h3>[EVENT ID 2]</h3>
-        <p>
-          Category ID: IDID2<br />
-          PRICE: RM 5009.00<br />
-          CATEGORY TYPE: GALAXY
-        </p>
-      </div>
+      if (empty($cats)) {
+        echo '<p>No categories available.</p>';
+      } else {
+        foreach ($cats as $c) {
+          echo '<div class="category-card">';
+          echo '<h3>' . htmlspecialchars($c['Category_type']) . '</h3>';
+          echo '<p>Category ID: ' . (int)$c['Category_ID'] . '<br />PRICE: RM ' . number_format($c['Price'],2) . '<br />' . htmlspecialchars($c['description'] ?? '') . '</p>';
+          echo '</div>';
+        }
+      }
+      ?>
     </div>
   </body>
 </html>

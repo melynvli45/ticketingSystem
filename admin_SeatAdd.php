@@ -1,67 +1,66 @@
+<?php
+session_start();
+require_once __DIR__ . '/db.php';
+
+// Only admins
+if (empty($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
+  header('Location: login.php');
+  exit;
+}
+
+$errors = [];
+$success = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $category_type = trim($_POST['category_type'] ?? '');
+  $price = isset($_POST['price']) ? (float)$_POST['price'] : 0.0;
+  $description = trim($_POST['description'] ?? '');
+
+  if ($category_type === '' || $price <= 0) {
+    $errors[] = 'Please provide a category type and a positive price.';
+  } else {
+    try {
+      $stmt = $pdo->prepare('INSERT INTO category (Price, Category_type, description) VALUES (?, ?, ?)');
+      $stmt->execute([$price, $category_type, $description]);
+      $success = 'Category added successfully.';
+    } catch (PDOException $e) {
+      $errors[] = 'Database error: ' . $e->getMessage();
+    }
+  }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Main Menu</title>
+    <title>Add Category</title>
     <link rel="stylesheet" href="admincss.css" />
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
   </head>
 
   <body class="other-page">
-    <nav class="navbar">
-      <div class="logo">TixPop</div>
-
-      <div class="nav-links">
-        <a href="home.php">Home</a>
-        <div class="dropdown">
-          <button class="dropbtn">Manage Concert</button>
-          <div class="dropdown-content">
-            <a href="admin_ConcertAdd.php">Add Concert</a>
-            <a href="admin_Concert.php">Concert List</a>
-          </div>
-        </div>
-        <div class="dropdown">
-          <button class="dropbtn">Booking List</button>
-          <div class="dropdown-content">
-            <a href="admin_bookpending.php">Pending</a>
-            <a href="admin_bookapprove.php">  Approved</a>
-            <a href="admin_bookcancel.php">Rejected</a>
-          </div>
-        </div>
-
-        <div class="dropdown">
-          <button class="dropbtn">Seat Category</button>
-          <div class="dropdown-content">
-            <a href="admin_SeatAdd.php">Add Category</a>
-            <a href="admin_Seatcategory.php">  Seat List</a>
-          </div>
-        </div>
-
-        <a href="admin_profile.php">Profile</a>
-        <a href="index.php">Log Out</a>
-      </div>
-    </nav>
+    <?php include __DIR__ . '/admin_anavbar.php'; ?>
 
     <div class="eventBox">
-      <form action="admin_ConcertAdd.php">
-        <h1>PLEASE ENTER THE FOLLOWING DETAILS</h1>
+      <h1>ADD SEAT CATEGORY</h1>
 
-        <label>CATEGORY ID:</label>
-        <input type="text" placeholder="CATEGORY IDENTIFICATION" />
+      <?php if ($success): ?>
+        <div style="color:green;margin-bottom:12px"><?=htmlspecialchars($success)?></div>
+      <?php endif; ?>
+      <?php if (!empty($errors)): ?>
+        <div style="color:#900;margin-bottom:12px"><?=htmlspecialchars(implode('\n',$errors))?></div>
+      <?php endif; ?>
 
-        <!--Pakai select, masa buat php-->
-        <label>EVENT ID: </label>
-        <input type="text" placeholder="ID" required />
+      <form method="post" action="admin_SeatAdd.php">
+        <label>CATEGORY TYPE:</label>
+        <input type="text" name="category_type" required value="<?=htmlspecialchars($_POST['category_type'] ?? '')?>" />
 
-        <label>PRICE (RM): </label>
-        <input type="number" placeholder="0.00" required />
+        <label>PRICE (RM):</label>
+        <input type="number" step="0.01" name="price" required value="<?=htmlspecialchars($_POST['price'] ?? '')?>" />
 
-        <label>CATEGORY TYPE: </label>
-        <input type="text" placeholder="TYPE" required />
+        <label>DESCRIPTION (optional):</label>
+        <textarea name="description"><?=htmlspecialchars($_POST['description'] ?? '')?></textarea>
 
         <div class="btn-container">
           <button class="eventbtn" type="submit">SUBMIT</button>
@@ -69,6 +68,5 @@
         </div>
       </form>
     </div>
-
   </body>
 </html>

@@ -14,26 +14,26 @@ $is_admin = (($_SESSION['user_type'] ?? '') === 'admin');
 // Fetch tickets: admins see all, regular users see only their own
 if ($is_admin) {
   $stmt = $pdo->prepare(
-    "SELECT i.Invoice_ID, i.Quantity, i.Date AS InvoiceDate,
-        p.Payment_status, e.Name AS EventName, c.Category_type, c.Price, u.Full_name, u.User_ID
-     FROM invoice i
-     LEFT JOIN payment p ON p.Invoice_ID = i.Invoice_ID
-     LEFT JOIN event e ON e.Event_ID = i.Event_ID
-     LEFT JOIN category c ON c.Category_ID = e.Category_ID
-     LEFT JOIN users u ON i.User_ID = u.User_ID
-     ORDER BY i.Date DESC"
+   "SELECT i.Invoice_ID, i.Quantity, i.Date AS InvoiceDate,
+      p.Payment_status, e.Name AS EventName, c.Category_type, c.Price, u.Full_name, u.User_ID
+    FROM invoice i
+    LEFT JOIN payment p ON p.Invoice_ID = i.Invoice_ID
+    LEFT JOIN event e ON e.Event_ID = i.Event_ID
+    LEFT JOIN category c ON c.Category_ID = i.Category_ID
+    LEFT JOIN users u ON i.User_ID = u.User_ID
+    ORDER BY i.Date DESC"
   );
   $stmt->execute();
 } else {
   $stmt = $pdo->prepare(
-    "SELECT i.Invoice_ID, i.Quantity, i.Date AS InvoiceDate,
-        p.Payment_status, e.Name AS EventName, c.Category_type, c.Price
-     FROM invoice i
-     LEFT JOIN payment p ON p.Invoice_ID = i.Invoice_ID
-     LEFT JOIN event e ON e.Event_ID = i.Event_ID
-     LEFT JOIN category c ON c.Category_ID = e.Category_ID
-     WHERE i.User_ID = ?
-     ORDER BY i.Date DESC"
+   "SELECT i.Invoice_ID, i.Quantity, i.Date AS InvoiceDate,
+      p.Payment_status, e.Name AS EventName, c.Category_type, c.Price
+    FROM invoice i
+    LEFT JOIN payment p ON p.Invoice_ID = i.Invoice_ID
+    LEFT JOIN event e ON e.Event_ID = i.Event_ID
+    LEFT JOIN category c ON c.Category_ID = i.Category_ID
+    WHERE i.User_ID = ?
+    ORDER BY i.Date DESC"
   );
   $stmt->execute([$user_id]);
 }
@@ -59,13 +59,34 @@ $tickets = $stmt->fetchAll();
       <div class="logo">TixPop</div>
 
       <div class="nav-links">
-        <a href="home.php">Home</a>
-        <a href="discover.php">Discover</a>
-        <a href="seatCategory.php">Seat Category</a>
-        <a href="ticketpurchase.php">Ticket Purchase</a>
-        <a href="viewTicket.php">My Ticket</a>
-        <a href="profile.php">Profile</a>
-        <a href="index.php">Log Out</a>
+        <?php if (!empty($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin'): ?>
+          <a href="home.php">Home</a>
+          <div class="dropdown">
+            <button class="dropbtn">Manage Concert</button>
+            <div class="dropdown-content">
+              <a href="admin_ConcertAdd.php">Add Concert</a>
+              <a href="admin_Concert.php">Concert List</a>
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="dropbtn">Booking List</button>
+            <div class="dropdown-content">
+              <a href="admin_bookpending.php">Pending</a>
+              <a href="admin_bookapprove.php">Approved</a>
+              <a href="admin_bookcancel.php">Rejected</a>
+            </div>
+          </div>
+          <a href="admin_Seatcategory.php">Seat Category</a>
+          <a href="admin_profile.php">Profile</a>
+          <a href="index.php">Log Out</a>
+        <?php else: ?>
+          <a href="home.php">Home</a>
+          <a href="discover.php">Discover</a>
+          <a href="ticketpurchase.php">Ticket Purchase</a>
+          <a href="viewTicket.php">My Ticket</a>
+          <a href="profile.php">Profile</a>
+          <a href="index.php">Log Out</a>
+        <?php endif; ?>
       </div>
     </nav>
 

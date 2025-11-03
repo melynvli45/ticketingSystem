@@ -1,3 +1,4 @@
+<?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -12,6 +13,9 @@
   </head>
 
   <body class="home-page">
+    <?php if (!empty($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin'): ?>
+      <?php include __DIR__ . '/admin_anavbar.php'; ?>
+    <?php else: ?>
     <nav class="navbar">
       <div class="logo">TixPop</div>
       <!-- 🎵 Audio Player -->
@@ -25,13 +29,13 @@
       <div class="nav-links">
         <a href="home.php">Home</a>
         <a href="discover.php">Discover</a>
-        <a href="seatCategory.php">Seat Category</a>
         <a href="ticketpurchase.php">Ticket Purchase</a>
         <a href="viewTicket.php">My Ticket</a>
         <a href="profile.php">Profile</a>
         <a href="index.php">Log Out</a>
       </div>
     </nav>
+    <?php endif; ?>
 
     <div class="title">
       <h1>WORLD BAND</h1>

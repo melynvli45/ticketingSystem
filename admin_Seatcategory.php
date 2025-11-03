@@ -12,88 +12,48 @@
   </head>
 
   <body class="home-page">
-    <nav class="navbar">
-      <div class="logo">TixPop</div>
-
-      <div class="nav-links">
-        <a href="home.php">Home</a>
-        <div class="dropdown">
-          <button class="dropbtn">Manage Concert</button>
-          <div class="dropdown-content">
-            <a href="admin_ConcertAdd.php">Add Concert</a>
-            <a href="admin_Concert.php">Concert List</a>
-          </div>
-        </div>
-        <div class="dropdown">
-          <button class="dropbtn">Booking List</button>
-          <div class="dropdown-content">
-            <a href="admin_bookpending.php">Pending</a>
-            <a href="admin_bookapprove.php"> Approved</a>
-            <a href="admin_bookcancel.php">Rejected</a>
-          </div>
-        </div>
-
-        <div class="dropdown">
-          <button class="dropbtn">Seat Category</button>
-          <div class="dropdown-content">
-            <a href="admin_SeatAdd.php">Add Category</a>
-            <a href="admin_Seatcategory.php"> Seat List</a>
-          </div>
-        </div>
-
-        <a href="admin_profile.php">Profile</a>
-        <a href="index.php">Log Out</a>
-      </div>
-    </nav>
+    <?php
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    require_once __DIR__ . '/db.php';
+    // require admin
+    if (empty($_SESSION['user_type']) || ($_SESSION['user_type'] ?? '') !== 'admin') {
+        header('Location: login.php');
+        exit;
+    }
+    ?>
+    <?php include __DIR__ . '/admin_anavbar.php'; ?>
 
     <div class="title">
       <h1>SEAT CATEGORY</h1>
+      <div style="margin-top:12px"><a class="eventbtn" href="admin_SeatAdd.php">+ Add New Category</a></div>
     </div>
-
-    <!--Again, bayangan, delete masa buat php, nak tukar dipersilakan-->
 
     <div class="category-box">
-      <div class="category-card">
-        <h3>[EVENT ID 1]</h3>
-        <p>
-          Category ID: IDID<br />
-          PRICE: RM 899.00<br />
-          CATEGORY TYPE: VVVVVVIP
-        </p>
+      <?php
+      try {
+        $cats = $pdo->query('SELECT Category_ID, Category_type, Price, description FROM category ORDER BY Price DESC')->fetchAll();
+      } catch (Exception $e) {
+        $cats = [];
+      }
 
-        <div class="rbtn-container">
-        <a href="admin_ConcertUpdate.php">
-        <button type="submit" class="bandbtn">UPDATE</button>
-        </a>
-        <button class="bandbtn" onclick="deleteItem()">DELETE</button>
-        </div>
-      </div>
-
-      <div class="category-card">
-        <h3>[EVENT ID 2]</h3>
-        <p>
-          Category ID: IDID2<br />
-          PRICE: RM 5009.00<br />
-          CATEGORY TYPE: GALAXY
-        </p>
-
-        <div class="rbtn-container">
-        <a href="admin_SeatUpdate.php">
-        <button type="submit" class="bandbtn">UPDATE</button>
-        </a>
-        <button class="bandbtn" onclick="deleteItem()">DELETE</button>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      function deleteItem(button) {
-        if (confirm("Are you sure you want to delete this concert?")) {
-          // Find the closest band card and remove it
-          const card = button.closest(".band-card");
-          card.remove();
+      if (empty($cats)) {
+        echo '<p>No categories available.</p>';
+      } else {
+        foreach ($cats as $c) {
+          echo '<div class="category-card">';
+          echo '<h3>' . htmlspecialchars($c['Category_type']) . '</h3>';
+          echo '<p>Category ID: ' . (int)$c['Category_ID'] . '<br />PRICE: RM ' . number_format($c['Price'],2) . '<br />' . htmlspecialchars($c['description'] ?? '') . '</p>';
+          echo '<div class="rbtn-container">';
+          echo '<a href="admin_SeatUpdate.php?id=' . (int)$c['Category_ID'] . '"><button type="button" class="bandbtn">UPDATE</button></a>';
+          echo '<form method="post" action="admin_SeatUpdate.php" style="display:inline-block;margin-left:8px">';
+          echo '<input type="hidden" name="category_id" value="' . (int)$c['Category_ID'] . '" />';
+          echo '<button class="bandbtn" type="submit" name="delete_category" value="1" onclick="return confirm(\'Are you sure you want to delete this category?\')">DELETE</button>';
+          echo '</form>';
+          echo '</div>';
+          echo '</div>';
         }
       }
-    </script>
+      ?>
+    </div>
   </body>
 </html>

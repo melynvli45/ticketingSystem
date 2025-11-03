@@ -1,3 +1,4 @@
+<?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,20 +17,40 @@
       <div class="logo">TixPop</div>
 
       <div class="nav-links">
-        <a href="home.php">Home</a>
-        <a href="discover.php">Discover</a>
-        <a href="seatCategory.php">Seat Category</a>
-        <a href="ticketpurchase.php">Ticket Purchase</a>
-        <a href="viewTicket.php">My Ticket</a>
-        <a href="profile.php">Profile</a>
-        <a href="index.php">Log Out</a>
+        <?php if (!empty($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin'): ?>
+          <a href="home.php">Home</a>
+          <div class="dropdown">
+            <button class="dropbtn">Manage Concert</button>
+            <div class="dropdown-content">
+              <a href="admin_ConcertAdd.php">Add Concert</a>
+              <a href="admin_Concert.php">Concert List</a>
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="dropbtn">Booking List</button>
+            <div class="dropdown-content">
+              <a href="admin_bookpending.php">Pending</a>
+              <a href="admin_bookapprove.php">Approved</a>
+              <a href="admin_bookcancel.php">Rejected</a>
+            </div>
+          </div>
+          <a href="admin_Seatcategory.php">Seat Category</a>
+          <a href="admin_profile.php">Profile</a>
+          <a href="index.php">Log Out</a>
+        <?php else: ?>
+          <a href="home.php">Home</a>
+          <a href="discover.php">Discover</a>
+          <a href="ticketpurchase.php">Ticket Purchase</a>
+          <a href="viewTicket.php">My Ticket</a>
+          <a href="profile.php">Profile</a>
+          <a href="index.php">Log Out</a>
+        <?php endif; ?>
       </div>
     </nav>
 
     <?php
     // ticketpurchase.php - show available events from DB and post to process_purchase.php
-    require_once __DIR__ . '/db.php';
-    session_start();
+  require_once __DIR__ . '/db.php';
 
     // fetch events to populate select
     try {
@@ -38,6 +59,13 @@
     } catch (Exception $e) {
         $events = [];
     }
+  // fetch categories from DB (so UI reflects current categories like VIP / General)
+  try {
+    $catsStmt = $pdo->query('SELECT Category_ID, Category_type, Price FROM category ORDER BY Price DESC');
+    $categories = $catsStmt->fetchAll();
+  } catch (Exception $e) {
+    $categories = [];
+  }
     ?>
 
     <div class="ticket-buy-box">
@@ -57,12 +85,11 @@
         </select>
 
         <label>SEAT CATEGORY: </label>
-        <select name="category_type" required>
+        <select name="category_id" required>
           <option value="">--SELECT ONE--</option>
-          <option value="BRONZE">BRONZE - RM 599.00</option>
-          <option value="PLATINUM">PLATINUM - RM 699.00</option>
-          <option value="GOLD">GOLD - RM 899.00</option>
-          <option value="VIP">VIP - RM 1099.00</option>
+          <?php foreach ($categories as $c): ?>
+            <option value="<?= (int)$c['Category_ID'] ?>"><?=htmlspecialchars($c['Category_type'])?> - RM <?=number_format($c['Price'], 2)?></option>
+          <?php endforeach; ?>
         </select>
 
         <label>QUANTITY</label>
