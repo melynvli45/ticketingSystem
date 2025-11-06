@@ -47,9 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $errors[] = 'Please provide a valid category type and a positive price.';
     } else {
       try {
-        $up = $pdo->prepare('UPDATE category SET Price = ?, Category_type = ?, description = ? WHERE Category_ID = ?');
-        $up->execute([$price, $category_type, $description, $catId]);
-        $success = 'Category updated successfully.';
+  $up = $pdo->prepare('UPDATE category SET Price = ?, Category_type = ?, description = ? WHERE Category_ID = ?');
+  $up->execute([$price, $category_type, $description, $catId]);
+  // After update, return to the seat category list
+  header('Location: admin_Seatcategory.php');
+  exit;
       } catch (Exception $e) {
         $errors[] = 'Database error: ' . $e->getMessage();
       }

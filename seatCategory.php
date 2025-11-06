@@ -31,8 +31,8 @@ require_once __DIR__ . '/db.php';
         <a href="discover.php">Discover</a>
         <a href="ticketpurchase.php">Ticket Purchase</a>
         <a href="viewTicket.php">My Ticket</a>
-        <a href="profile.php">Profile</a>
-        <a href="index.php">Log Out</a>
+  <a href="profile.php">Profile</a>
+  <a href="logout.php">Log Out</a>
         <?php if (!empty($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin'): ?>
           <a href="admin_SeatAdd.php">Add Category</a>
         <?php endif; ?>

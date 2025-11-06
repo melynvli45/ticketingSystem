@@ -23,7 +23,7 @@
     if (empty($_SESSION['user_id']) || ($_SESSION['user_type'] ?? '') !== 'admin') {
         echo '<p style="color:#900">Access denied. Admins only.</p>';
     } else {
-        $stmt = $pdo->prepare('SELECT p.Payment_ID, p.Invoice_ID, p.Payment_date, p.Payment_status, i.Quantity, i.Date AS invoice_date, u.Full_name, u.Email, e.Name AS event_name
+  $stmt = $pdo->prepare('SELECT p.Payment_ID, p.Invoice_ID, p.Payment_date, p.Proof_of_payment, p.Payment_status, i.Quantity, i.Date AS invoice_date, u.Full_name, u.Email, e.Name AS event_name
                                FROM payment p
                                JOIN invoice i ON p.Invoice_ID = i.Invoice_ID
                                JOIN users u ON i.User_ID = u.User_ID
@@ -36,7 +36,7 @@
         if (!$rows) {
             echo '<p>No pending bookings.</p>';
         } else {
-            echo '<table class="table"><thead><tr><th>No</th><th>Full Name</th><th>Concert</th><th>Quantity</th><th>Invoice ID</th><th>Payment Date</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+            echo '<table class="table"><thead><tr><th>No</th><th>Full Name</th><th>Concert</th><th>Quantity</th><th>Invoice ID</th><th>Receipt</th><th>Payment Date</th><th>Status</th><th>Action</th></tr></thead><tbody>';
             $i = 1;
             foreach ($rows as $r) {
                 echo '<tr>';
@@ -45,6 +45,7 @@
                 echo '<td>' . htmlspecialchars($r['event_name'] ?? 'N/A') . '</td>';
                 echo '<td>' . htmlspecialchars($r['Quantity']) . '</td>';
                 echo '<td><a href="invoice.php?invoice=' . (int)$r['Invoice_ID'] . '">' . (int)$r['Invoice_ID'] . '</a></td>';
+                echo '<td>' . (!empty($r['Proof_of_payment']) ? '<a href="' . htmlspecialchars($r['Proof_of_payment']) . '" target="_blank">View</a>' : 'No receipt') . '</td>';
                 echo '<td>' . htmlspecialchars($r['Payment_date']) . '</td>';
                 echo '<td><span class="status pending">' . htmlspecialchars($r['Payment_status']) . '</span></td>';
                 echo '<td>';

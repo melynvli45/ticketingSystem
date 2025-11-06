@@ -73,15 +73,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Load current user for display
-$user = ['User_ID' => '', 'Full_name' => '', 'Email' => '', 'User_type' => 'user'];
-if (!empty($_SESSION['user_id'])) {
-  $stmt = $pdo->prepare('SELECT User_ID, Full_name, Email, User_type FROM users WHERE User_ID = ?');
-  $stmt->execute([(int)$_SESSION['user_id']]);
-  $row = $stmt->fetch();
-  if ($row) {
-    $user = $row;
+$userId = !empty($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+$user = ['User_ID' => $userId, 'Full_name' => '', 'Email' => '', 'User_type' => 'user'];
+if ($userId > 0) {
+  try {
+    // Select full row so we adapt to your DB schema (but never expose Password)
+    $stmt = $pdo->prepare('SELECT * FROM users WHERE User_ID = ?');
+    $stmt->execute([$userId]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+      // merge so missing columns fall back to defaults
+      $user = array_merge($user, $row);
+    }
+  } catch (PDOException $e) {
+    // ignore and continue with defaults
   }
 }
+
+// determine profile image from common column names, fall back to placeholder
+$profile_img = htmlspecialchars($user['Profile_Image'] ?? $user['profile_image'] ?? $user['avatar'] ?? 'image/hahahahahahahaha.jpg');
 
 ?>
 
@@ -105,13 +115,7 @@ if (!empty($_SESSION['user_id'])) {
       <div class="nav-links">
         <?php if (!empty($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin'): ?>
           <a href="home.php">Home</a>
-          <div class="dropdown">
-            <button class="dropbtn">Manage Concert</button>
-            <div class="dropdown-content">
-              <a href="admin_ConcertAdd.php">Add Concert</a>
-              <a href="admin_Concert.php">Concert List</a>
-            </div>
-          </div>
+          <a href="admin_Concert.php">Manage Concert</a>
           <div class="dropdown">
             <button class="dropbtn">Booking List</button>
             <div class="dropdown-content">
@@ -122,14 +126,14 @@ if (!empty($_SESSION['user_id'])) {
           </div>
           <a href="admin_Seatcategory.php">Seat Category</a>
           <a href="admin_profile.php">Profile</a>
-          <a href="index.php">Log Out</a>
+          <a href="logout.php">Log Out</a>
         <?php else: ?>
           <a href="home.php">Home</a>
           <a href="discover.php">Discover</a>
           <a href="ticketpurchase.php">Ticket Purchase</a>
           <a href="viewTicket.php">My Ticket</a>
           <a href="profile.php">Profile</a>
-          <a href="index.php">Log Out</a>
+          <a href="logout.php">Log Out</a>
         <?php endif; ?>
       </div>
     </nav>
@@ -138,7 +142,7 @@ if (!empty($_SESSION['user_id'])) {
       <div class="profile-card">
         <h1>USER PROFILE</h1>
         <div class="profile-img">
-          <img src="image/hahahahahahahaha.jpg" alt="Profile image" />
+          <img src="<?= htmlspecialchars($profile_img) ?>" alt="Profile image" />
         </div>
 
         <h2><?= htmlspecialchars($user['Full_name'] ?? 'Full Name') ?></h2>
@@ -147,6 +151,16 @@ if (!empty($_SESSION['user_id'])) {
         <div class="info">
           <p>Email: <?= htmlspecialchars($user['Email'] ?? '') ?></p>
           <p>Type : <?= htmlspecialchars(ucfirst($user['User_type'] ?? 'user')) ?></p>
+          <?php if (!empty($user['User_ID'])): ?>
+            <p>User ID: <?= htmlspecialchars($user['User_ID']) ?></p>
+          <?php endif; ?>
+          <?php
+            // try common created timestamp column names
+            $created = $user['created_at'] ?? $user['created'] ?? $user['created_on'] ?? null;
+            if ($created):
+          ?>
+            <p>Created: <?= htmlspecialchars($created) ?></p>
+          <?php endif; ?>
         </div>
 
         <a href="profileUpdate.php" class="btn-edit-profile">Edit Profile</a>

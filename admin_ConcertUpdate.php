@@ -41,8 +41,8 @@
           </div>
         </div>
 
-        <a href="admin_profile.php">Profile</a>
-        <a href="index.php">Log Out</a>
+  <a href="admin_profile.php">Profile</a>
+  <a href="logout.php">Log Out</a>
       </div>
     </nav>
 

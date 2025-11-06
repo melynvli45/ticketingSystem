@@ -124,6 +124,8 @@ a {
 .dropdown {
   position: relative;
   display: inline-block;
+  /* FIX: Ensure the dropdown container has a high z-index to dominate siblings */
+  z-index: 1001; 
 }
 
 .dropbtn {
@@ -142,22 +144,24 @@ a {
 .dropdown-content {
   display: none;
   position: absolute;
+  top: 100%; /* ENSURE DROPDOWN APPEARS BELOW BUTTON */
   background-color: #333;
   min-width: 160px;
   box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
   border-radius: 8px;
-  z-index: 1;
+  /* FIX: Set a very high z-index to overcome any other overlapping element on home.php */
+  z-index: 99999; 
 }
 
 .dropdown-content a {
   color: rgb(255, 255, 255);
   padding: 10px 15px;
   text-decoration: none;
-  display: block;
+  display: block; /* ENSURE LINKS ARE VERTICAL BLOCKS */
 }
 
 .dropdown-content a:hover {
-  background-color: #f1f1f1;
+  background-color: #555; /* CORRECTED: Darker hover for visibility */
 }
 
 .dropdown:hover .dropdown-content {

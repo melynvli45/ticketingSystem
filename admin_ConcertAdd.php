@@ -80,9 +80,10 @@ $categories = $pdo->query('SELECT Category_ID, Category_type FROM category ORDER
           }
         }
 
-        $pdo->commit();
-        header('Location: discover.php');
-        exit;
+  $pdo->commit();
+  // After deleting from admin area, go back to admin concert list
+  header('Location: admin_Concert.php');
+  exit;
       }
     } catch (PDOException $e) {
       if ($pdo->inTransaction()) $pdo->rollBack();
@@ -134,12 +135,16 @@ $categories = $pdo->query('SELECT Category_ID, Category_type FROM category ORDER
           $stmt = $pdo->prepare('UPDATE event SET Date = ?, Time = ?, Venue = ?, Name = ?, Category_ID = ? WHERE Event_ID = ?');
           $stmt->execute([$date, $time ?: null, $venue, $name, $category_id, $eventId]);
         }
-        $success = 'Event updated successfully.';
+        // After updating, go back to the concert list
+        header('Location: admin_Concert.php');
+        exit;
       } else {
-        // insert new
-        $stmt = $pdo->prepare('INSERT INTO event (Date, Time, Venue, Name, Category_ID, poster) VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$date, $time ?: null, $venue, $name, $category_id, $posterFilename]);
-        $success = 'Event added successfully.';
+  // insert new
+  $stmt = $pdo->prepare('INSERT INTO event (Date, Time, Venue, Name, Category_ID, poster) VALUES (?, ?, ?, ?, ?, ?)');
+  $stmt->execute([$date, $time ?: null, $venue, $name, $category_id, $posterFilename]);
+  // After successful insert, redirect to the concert list
+  header('Location: admin_Concert.php');
+  exit;
       }
     } catch (PDOException $e) {
       $errors[] = 'Database error: ' . $e->getMessage();

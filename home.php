@@ -31,8 +31,8 @@
         <a href="discover.php">Discover</a>
         <a href="ticketpurchase.php">Ticket Purchase</a>
         <a href="viewTicket.php">My Ticket</a>
-        <a href="profile.php">Profile</a>
-        <a href="index.php">Log Out</a>
+  <a href="profile.php">Profile</a>
+  <a href="logout.php">Log Out</a>
       </div>
     </nav>
     <?php endif; ?>

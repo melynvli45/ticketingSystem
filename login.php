@@ -19,6 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $_SESSION['user_id'] = $user['User_ID'];
       $_SESSION['full_name'] = $user['Full_name'];
       $_SESSION['user_type'] = $user['User_type'];
+      // Redirect based on user type:
+      // - admins -> pending bookings
+      // - regular users -> viewticket page
+      // - any other/unknown type -> home
+      if (isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin') {
+        header('Location: admin_bookpending.php');
+        exit;
+      } elseif (isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'user') {
+        header('Location: viewticket.php');
+        exit;
+      }
       header('Location: home.php');
       exit;
     } else {

@@ -22,7 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
       $stmt = $pdo->prepare('INSERT INTO category (Price, Category_type, description) VALUES (?, ?, ?)');
       $stmt->execute([$price, $category_type, $description]);
-      $success = 'Category added successfully.';
+      // After successful insert, redirect back to the admin seat list
+      header('Location: admin_Seatcategory.php');
+      exit;
     } catch (PDOException $e) {
       $errors[] = 'Database error: ' . $e->getMessage();
     }

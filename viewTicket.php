@@ -15,7 +15,7 @@ $is_admin = (($_SESSION['user_type'] ?? '') === 'admin');
 if ($is_admin) {
   $stmt = $pdo->prepare(
    "SELECT i.Invoice_ID, i.Quantity, i.Date AS InvoiceDate,
-      p.Payment_status, e.Name AS EventName, c.Category_type, c.Price, u.Full_name, u.User_ID
+      p.Payment_status, p.Proof_of_payment, p.Payment_ID, e.Name AS EventName, c.Category_type, c.Price, u.Full_name, u.User_ID
     FROM invoice i
     LEFT JOIN payment p ON p.Invoice_ID = i.Invoice_ID
     LEFT JOIN event e ON e.Event_ID = i.Event_ID
@@ -27,7 +27,7 @@ if ($is_admin) {
 } else {
   $stmt = $pdo->prepare(
    "SELECT i.Invoice_ID, i.Quantity, i.Date AS InvoiceDate,
-      p.Payment_status, e.Name AS EventName, c.Category_type, c.Price
+      p.Payment_status, p.Proof_of_payment, p.Payment_ID, e.Name AS EventName, c.Category_type, c.Price
     FROM invoice i
     LEFT JOIN payment p ON p.Invoice_ID = i.Invoice_ID
     LEFT JOIN event e ON e.Event_ID = i.Event_ID
@@ -78,14 +78,14 @@ $tickets = $stmt->fetchAll();
           </div>
           <a href="admin_Seatcategory.php">Seat Category</a>
           <a href="admin_profile.php">Profile</a>
-          <a href="index.php">Log Out</a>
+          <a href="logout.php">Log Out</a>
         <?php else: ?>
           <a href="home.php">Home</a>
           <a href="discover.php">Discover</a>
           <a href="ticketpurchase.php">Ticket Purchase</a>
           <a href="viewTicket.php">My Ticket</a>
           <a href="profile.php">Profile</a>
-          <a href="index.php">Log Out</a>
+          <a href="logout.php">Log Out</a>
         <?php endif; ?>
       </div>
     </nav>
@@ -100,6 +100,7 @@ $tickets = $stmt->fetchAll();
           <th>Quantity</th>
           <th>Total</th>
           <th>Invoice ID</th>
+          <th>Receipt</th>
           <th>Status</th>
           <th>Action</th>
         </tr>
@@ -108,7 +109,7 @@ $tickets = $stmt->fetchAll();
         <tbody>
           <?php if (empty($tickets)): ?>
             <tr>
-              <td colspan="9">No tickets found. <a href="ticketpurchase.php">Buy tickets</a></td>
+              <td colspan="10">No tickets found. <a href="ticketpurchase.php">Buy tickets</a></td>
             </tr>
           <?php else: ?>
             <?php $no = 1; foreach ($tickets as $t): ?>
@@ -127,6 +128,17 @@ $tickets = $stmt->fetchAll();
                 </td>
                 <td>
                   <a href="invoice.php?invoice=<?= (int)$t['Invoice_ID'] ?>"><?= (int)$t['Invoice_ID'] ?></a>
+                </td>
+                <td>
+                  <?php if (!empty($t['Proof_of_payment'])): ?>
+                    <a href="<?= htmlspecialchars($t['Proof_of_payment']) ?>" target="_blank">View Receipt</a>
+                  <?php else: ?>
+                    <?php if (!empty($_SESSION['user_id']) && $_SESSION['user_id'] == ($t['User_ID'] ?? $_SESSION['user_id'])): ?>
+                      <a href="purchasesuccess.php?invoice=<?= (int)$t['Invoice_ID'] ?>">Upload Receipt</a>
+                    <?php else: ?>
+                      -
+                    <?php endif; ?>
+                  <?php endif; ?>
                 </td>
                 <td>
                   <span class="status <?= htmlspecialchars($t['Payment_status'] ?? 'pending') ?>">

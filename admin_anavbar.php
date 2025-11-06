@@ -1,17 +1,10 @@
-<!--Admin navbar-->
-
 <nav class="navbar">
   <div class="logo">TixPop</div>
 
   <div class="nav-links">
     <a href="home.php">Home</a>
-    <div class="dropdown">
-      <button class="dropbtn">Manage Concert</button>
-      <div class="dropdown-content">
-        <a href="admin_ConcertAdd.php">Add Concert</a>
-        <a href="admin_Concert.php">Concert List</a>
-      </div>
-    </div>
+    <!-- Manage Concert: single link to concert list (click shows admin_Concert.php) -->
+    <a href="admin_Concert.php">Manage Concert</a>
     <div class="dropdown">
       <button class="dropbtn">Booking List</button>
       <div class="dropdown-content">
@@ -21,15 +14,10 @@
       </div>
     </div>
 
-    <div class="dropdown">
-      <button class="dropbtn">Seat Category</button>
-      <div class="dropdown-content">
-        <a href="admin_SeatAdd.php">Add Category</a>
-        <a href="admin_Seatcategory.php"> Seat List</a>
-      </div>
-    </div>
+    <!-- Seat Category: direct link to seat list -->
+    <a href="admin_Seatcategory.php">Seat Category</a>
 
     <a href="admin_profile.php">Profile</a>
-    <a href="index.php">Log Out</a>
+    <a href="logout.php">Log Out</a>
   </div>
 </nav>
