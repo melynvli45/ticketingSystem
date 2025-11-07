@@ -14,7 +14,11 @@
 
   <body class="home-page">
     <?php if (!empty($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin'): ?>
-      <?php include __DIR__ . '/admin_anavbar.php'; ?>
+      <?php
+        // For admin homepage we want Booking List to be a normal link (not a dropdown)
+        $admin_simple_booking = true;
+        include __DIR__ . '/admin_anavbar.php';
+      ?>
     <?php else: ?>
     <nav class="navbar">
       <div class="logo">TixPop</div>
