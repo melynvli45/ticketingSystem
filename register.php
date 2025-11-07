@@ -6,13 +6,15 @@ require_once __DIR__ . '/db.php';
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $email = filter_var(trim($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
-  $username = trim($_POST['username'] ?? '');
-  $full_name = trim($_POST['full_name'] ?? $username);
+  // Removed $username = trim($_POST['username'] ?? '');
+  $full_name = trim($_POST['full_name'] ?? ''); // Relying on full_name now
   $password = $_POST['password'] ?? '';
   $password_confirm = $_POST['password_confirm'] ?? '';
 
   if (!$email) {
     $error = 'Please enter a valid email.';
+  } elseif ($full_name === '') { // Added check for full_name
+    $error = 'Please enter your Full Name.';
   } elseif ($password === '') {
     $error = 'Please enter a password.';
   } elseif ($password !== $password_confirm) {
@@ -52,16 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <?php if ($error): ?>
         <div class="form-error" style="color:#900;margin-bottom:12px"><?=htmlspecialchars($error)?></div>
       <?php endif; ?>
-      <form method="post" action="register.php"> <!--Nanti masa tukar jadi php tu--> 
-        <h1>TIXPOP TICKETING SYSTEM</h1>
+      <form method="post" action="register.php"> <h1>TIXPOP TICKETING SYSTEM</h1>
 
         <h5>Please enter your details</h5>
         <div class="input-box">
           <input type="email" name="email" value="<?=htmlspecialchars($_POST['email'] ?? '')?>" placeholder="Email" required />
-        </div>
-
-        <div class="input-box">
-          <input type="text" name="username" value="<?=htmlspecialchars($_POST['username'] ?? '')?>" placeholder="Username" required />
         </div>
 
         <div class="input-box">

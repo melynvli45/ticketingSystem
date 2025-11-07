@@ -105,10 +105,7 @@
       <form action="profileUpdate.php" method="post">
         <h1>UPDATE YOUR PROFILE</h1>
 
-        <label>USERNAME:</label>
-        <input type="text" name="username" value="<?= htmlspecialchars($user['Email'] ?? '') ?>" readonly />
-
-  <label>FULL NAME: </label>
+        <label>FULL NAME: </label>
   <input type="text" name="full_name" value="<?= htmlspecialchars($user['Full_name'] ?? '') ?>" required />
 
   <label>EMAIL: </label>
@@ -124,11 +121,9 @@
         <input type="password" name="confirm_password" placeholder="Repeat new password" />
 
         <label>TYPE:</label>
-        <!-- show user type but do NOT give it a name (so it can't be directly submitted/changed) -->
         <input type="text" value="<?= strtoupper(htmlspecialchars($user['User_type'] ?? 'user')) ?>" readonly/>
 
         <?php if (!empty($user['User_ID'])): ?>
-          <!-- fallback identifier if session isn't available for some reason -->
           <input type="hidden" name="user_id" value="<?= (int)$user['User_ID'] ?>" />
         <?php endif; ?>
 
