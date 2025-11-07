@@ -14,7 +14,7 @@ $is_admin = (($_SESSION['user_type'] ?? '') === 'admin');
 // Fetch tickets: admins see all, regular users see only their own
 if ($is_admin) {
   $stmt = $pdo->prepare(
-   "SELECT i.Invoice_ID, i.Quantity, i.Date AS InvoiceDate,
+   "SELECT i.Invoice_ID, i.Quantity, i.Date AS InvoiceDate, i.Ticket_status,
       p.Payment_status, p.Proof_of_payment, p.Payment_ID, e.Name AS EventName, c.Category_type, c.Price, u.Full_name, u.User_ID
     FROM invoice i
     LEFT JOIN payment p ON p.Invoice_ID = i.Invoice_ID
@@ -26,7 +26,7 @@ if ($is_admin) {
   $stmt->execute();
 } else {
   $stmt = $pdo->prepare(
-   "SELECT i.Invoice_ID, i.Quantity, i.Date AS InvoiceDate,
+   "SELECT i.Invoice_ID, i.Quantity, i.Date AS InvoiceDate, i.Ticket_status,
       p.Payment_status, p.Proof_of_payment, p.Payment_ID, e.Name AS EventName, c.Category_type, c.Price
     FROM invoice i
     LEFT JOIN payment p ON p.Invoice_ID = i.Invoice_ID
@@ -74,6 +74,7 @@ $tickets = $stmt->fetchAll();
               <a href="admin_bookpending.php">Pending</a>
               <a href="admin_bookapprove.php">Approved</a>
               <a href="admin_bookcancel.php">Rejected</a>
+              <a href="admin_bookdeleted.php">Cancelled</a>
             </div>
           </div>
           <a href="admin_Seatcategory.php">Seat Category</a>
@@ -113,6 +114,16 @@ $tickets = $stmt->fetchAll();
             </tr>
           <?php else: ?>
             <?php $no = 1; foreach ($tickets as $t): ?>
+              <?php 
+                // Determine display status: prioritize Ticket_status if cancelled/refunded, otherwise use Payment_status
+                $ticket_status = $t['Ticket_status'] ?? 'active';
+                $payment_status = $t['Payment_status'] ?? 'pending';
+
+                $display_status = htmlspecialchars($ticket_status);
+                if ($display_status === 'active') {
+                    $display_status = htmlspecialchars($payment_status);
+                }
+              ?>
               <tr>
                 <td><?= $no++ ?></td>
                 <td><?= htmlspecialchars($t['Full_name'] ?? ($_SESSION['full_name'] ?? '')) ?></td>
@@ -133,7 +144,7 @@ $tickets = $stmt->fetchAll();
                   <?php if (!empty($t['Proof_of_payment'])): ?>
                     <a href="<?= htmlspecialchars($t['Proof_of_payment']) ?>" target="_blank">View Receipt</a>
                   <?php else: ?>
-                    <?php if (!empty($_SESSION['user_id']) && $_SESSION['user_id'] == ($t['User_ID'] ?? $_SESSION['user_id'])): ?>
+                    <?php if (!empty($_SESSION['user_id']) && $_SESSION['user_id'] == ($t['User_ID'] ?? $_SESSION['user_id']) && $payment_status === 'pending' && $ticket_status === 'active'): ?>
                       <a href="purchasesuccess.php?invoice=<?= (int)$t['Invoice_ID'] ?>">Upload Receipt</a>
                     <?php else: ?>
                       -
@@ -141,31 +152,35 @@ $tickets = $stmt->fetchAll();
                   <?php endif; ?>
                 </td>
                 <td>
-                  <span class="status <?= htmlspecialchars($t['Payment_status'] ?? 'pending') ?>">
-                    <?= htmlspecialchars(ucfirst($t['Payment_status'] ?? 'pending')) ?>
+                  <span class="status <?= strtolower($display_status) ?>">
+                    <?= htmlspecialchars(ucfirst($display_status)) ?>
                   </span>
                 </td>
                 <td>
-                  <?php if (($t['Payment_status'] ?? 'pending') === 'pending'): ?>
+                  <?php if ($ticket_status === 'active'): ?>
                     <?php if ($is_admin): ?>
-                      <form method="post" action="admin_update_payment.php" style="display:inline"> 
-                        <input type="hidden" name="invoice_id" value="<?= (int)$t['Invoice_ID'] ?>"> 
-                        <input type="hidden" name="action" value="approve"> 
-                        <button type="submit" class="update-btn">Approve</button>
-                      </form>
-                      <form method="post" action="admin_update_payment.php" style="display:inline;margin-left:6px"> 
-                        <input type="hidden" name="invoice_id" value="<?= (int)$t['Invoice_ID'] ?>"> 
-                        <input type="hidden" name="action" value="reject"> 
-                        <button type="submit" class="delete-btn">Reject</button>
-                      </form>
-                      <!-- Admin may also delete if desired -->
+                      <?php if ($payment_status === 'pending'): ?>
+                        <form method="post" action="admin_update_payment.php" style="display:inline"> 
+                          <input type="hidden" name="invoice_id" value="<?= (int)$t['Invoice_ID'] ?>"> 
+                          <input type="hidden" name="action" value="approve"> 
+                          <button type="submit" class="update-btn">Approve</button>
+                        </form>
+                        <form method="post" action="admin_update_payment.php" style="display:inline;margin-left:6px"> 
+                          <input type="hidden" name="invoice_id" value="<?= (int)$t['Invoice_ID'] ?>"> 
+                          <input type="hidden" name="action" value="reject"> 
+                          <button type="submit" class="delete-btn">Reject</button>
+                        </form>
+                      <?php endif; ?>
                       <a href="delete_booking.php?invoice=<?= (int)$t['Invoice_ID'] ?>" class="delete-btn" style="margin-left:6px">Delete</a>
                     <?php else: ?>
-                      <a href="delete_booking.php?invoice=<?= (int)$t['Invoice_ID'] ?>" class="delete-btn">Delete</a>
+                      <?php if ($payment_status === 'pending' || $payment_status === 'approved'): ?>
+                        <a href="cancel_ticket.php?invoice=<?= (int)$t['Invoice_ID'] ?>" class="delete-btn">Cancel Ticket</a>
+                      <?php else: ?>
+                        -
+                      <?php endif; ?>
                     <?php endif; ?>
                   <?php else: ?>
-                    -
-                  <?php endif; ?>
+                    - <?php endif; ?>
                 </td>
               </tr>
             <?php endforeach; ?>

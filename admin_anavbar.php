@@ -3,7 +3,6 @@
 
   <div class="nav-links">
     <a href="home.php">Home</a>
-    <!-- Manage Concert: single link to concert list (click shows admin_Concert.php) -->
     <a href="admin_Concert.php">Manage Concert</a>
     <?php
     // By default render Booking List as a dropdown. Pages can set $admin_simple_booking = true
@@ -19,11 +18,11 @@
           <a href="admin_bookpending.php">Pending</a>
           <a href="admin_bookapprove.php">Approved</a>
           <a href="admin_bookcancel.php">Rejected</a>
+          <a href="admin_bookdeleted.php">Cancelled</a>
         </div>
       </div>
     <?php endif; ?>
 
-    <!-- Seat Category: direct link to seat list -->
     <a href="admin_Seatcategory.php">Seat Category</a>
 
     <a href="admin_profile.php">Profile</a>
