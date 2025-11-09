@@ -23,7 +23,8 @@
         echo '<p style="color:#900">Access denied. Admins only.</p>';
     } else {
         // Fetch invoices where Payment_status is 'pending' AND Ticket_status is NOT 'cancelled'
-        $stmt = $pdo->prepare('SELECT p.Payment_ID, p.Invoice_ID, p.Payment_date, p.Payment_status, i.Quantity, i.Date AS invoice_date, u.Full_name, u.Email, e.Name AS event_name
+        // UPDATED: Added p.Proof_of_payment
+        $stmt = $pdo->prepare('SELECT p.Payment_ID, p.Invoice_ID, p.Payment_date, p.Payment_status, p.Proof_of_payment, i.Quantity, i.Date AS invoice_date, u.Full_name, u.Email, e.Name AS event_name
                                FROM payment p
                                JOIN invoice i ON p.Invoice_ID = i.Invoice_ID
                                JOIN users u ON i.User_ID = u.User_ID
@@ -39,15 +40,24 @@
         if (!$rows) {
             echo '<p>No pending bookings found.</p>';
         } else {
-            echo '<table class="table"><thead><tr><th>No</th><th>Full Name</th><th>Concert</th><th>Quantity</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+            // UPDATED: Added 'Receipt' column header
+            echo '<table class="table"><thead><tr><th>No</th><th>Full Name</th><th>Concert</th><th>Quantity</th><th>Status</th><th>Receipt</th><th>Action</th></tr></thead><tbody>';
             $i = 1;
             foreach ($rows as $r) {
+                // Logic to display a link to the receipt image
+                $receipt_html = 'N/A';
+                if (!empty($r['Proof_of_payment'])) {
+                    $receipt_html = '<a href="' . htmlspecialchars($r['Proof_of_payment']) . '" target="_blank">View Receipt</a>';
+                }
+                
                 echo '<tr>';
                 echo '<td>' . $i++ . '</td>';
                 echo '<td>' . htmlspecialchars($r['Full_name']) . '</td>';
                 echo '<td>' . htmlspecialchars($r['event_name'] ?? 'N/A') . '</td>';
                 echo '<td>' . htmlspecialchars($r['Quantity']) . '</td>';
                 echo '<td><span class="status pending">' . htmlspecialchars($r['Payment_status']) . '</span></td>';
+                // Display Receipt column
+                echo '<td>' . $receipt_html . '</td>';
                 echo '<td>
                     <form method="post" action="admin_update_payment.php" style="display:inline"> 
                         <input type="hidden" name="invoice_id" value="' . (int)$r['Invoice_ID'] . '"> 

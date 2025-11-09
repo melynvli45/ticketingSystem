@@ -23,12 +23,15 @@
         echo '<p style="color:#900">Access denied. Admins only.</p>';
     } else {
         // Fetch invoices where Ticket_status is 'cancelled'
+        // UPDATED: LEFT JOIN payment table and select p.Proof_of_payment
         $stmt = $pdo->prepare('SELECT i.Invoice_ID, i.Quantity, i.Date AS invoice_date, i.Refund_reason, 
-                               u.Full_name, u.Email, e.Name AS event_name, c.Category_type, c.Price
+                               u.Full_name, u.Email, e.Name AS event_name, c.Category_type, c.Price,
+                               p.Proof_of_payment 
                                FROM invoice i
                                JOIN users u ON i.User_ID = u.User_ID
                                LEFT JOIN event e ON i.Event_ID = e.Event_ID
                                LEFT JOIN category c ON i.Category_ID = c.Category_ID
+                               LEFT JOIN payment p ON i.Invoice_ID = p.Invoice_ID /* Added JOIN to payment table */
                                WHERE i.Ticket_status = ?
                                ORDER BY i.Date DESC'); 
         $stmt->execute(['cancelled']);
@@ -39,11 +42,19 @@
         if (!$rows) {
             echo '<p>No user-cancelled bookings found.</p>';
         } else {
-            echo '<table class="table"><thead><tr><th>No</th><th>Full Name</th><th>Concert</th><th>Seat Category</th><th>Quantity</th><th>Total</th><th>Cancellation Reason</th><th>Action</th></tr></thead><tbody>';
+            // UPDATED: Added 'Receipt' column header
+            echo '<table class="table"><thead><tr><th>No</th><th>Full Name</th><th>Concert</th><th>Seat Category</th><th>Quantity</th><th>Total</th><th>Cancellation Reason</th><th>Receipt</th><th>Action</th></tr></thead><tbody>';
             $i = 1;
             foreach ($rows as $r) {
                 // Calculate total
                 $total = number_format(($r['Price'] ?? 0.00) * (int)($r['Quantity'] ?? 0), 2);
+
+                // Logic to display a link to the receipt image
+                $receipt_html = 'N/A';
+                if (!empty($r['Proof_of_payment'])) {
+                    $receipt_html = '<a href="' . htmlspecialchars($r['Proof_of_payment']) . '" target="_blank">View Receipt</a>';
+                }
+                
                 echo '<tr>';
                 echo '<td>' . $i++ . '</td>';
                 echo '<td>' . htmlspecialchars($r['Full_name']) . '</td>';
@@ -53,6 +64,8 @@
                 echo '<td>RM ' . $total . '</td>';
                 // Display the cancellation reason
                 echo '<td>' . nl2br(htmlspecialchars($r['Refund_reason'] ?? 'Not provided')) . '</td>'; 
+                // Display Receipt column
+                echo '<td>' . $receipt_html . '</td>';
                 // Admin action: can permanently delete the booking record (after processing any refund)
                 echo '<td><a href="delete_booking.php?invoice=' . (int)$r['Invoice_ID'] . '" class="delete-btn" onclick="return confirm(\'Are you sure you want to PERMANENTLY DELETE this cancelled booking?\')">Delete Record</a></td>';
                 echo '</tr>';
